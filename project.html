@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinema and TV Show Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* To be applied to all */
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            cursor: pointer;
+            
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto; 
+            font-size:  18px;
+            font-weight: bold; 
+           
+        }
+        .quiz-header {
+            text-align: center;
+            color: #0e0d0d;
+            font-size: 35px;
+         
+        }
+        .question {
+            text-align: center;
+            margin: 60px 0;
+            font-size: 30px;
+           
+           
+        }
+        .options {
+            margin-top: 20px; 
+            display: flex;
+            flex-direction: column;
+        }
+        .start-image {
+            width: 400px;
+            height: 250px;
+            display: block;
+            margin: 20px auto;
+            border-radius: 5px;
+        }
+        .start-button {
+            font-size: 20px;
+            background-color: #740828;
+            color: #fff;
+            border: none;
+            padding: 10px 30px;
+            width: 400px;
+            display: block;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: opacity 0.15s;
+            border-radius: 10px;
+        }
+        .start-button:hover {
+            opacity: 0.8;
+        }
+        
+        .option {
+            margin: 10px 0;
+            font-size: 20px;
+            background-color: rgb(3,90,166);
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            padding: 10px 30px;
+            width: 400px;
+            display: block;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 5px;
+        }
+        .option:hover {
+            background-color: rgb(4, 157, 217);
+        }
+        .option.incorrect {
+            background-color: rgb(242,5,25);
+        }
+        .option.correct {
+            background-color: rgb(119, 204, 0);
+        }
+        .next-button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #740828;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+        .next-button:hover {
+            opacity: 0.8;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+        .explanation {
+            margin-top: 10px;
+            font-size: 18x;
+            color: #555;
+            border: 2px solid #0c0a0c;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            display: none; /* Hidden initially */
+        }
+        .explanation-img {
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .correct {
+            color: white;
+            font-size: 20px;
+        }
+        .incorrect {
+            color: white;
+            font-size: 20px;
+        }
+        .incorrect-result {
+            color:  rgb(242,5,25);
+            font-size: 20px; 
+            margin: 20px 0; /* Add some margin for spacing */
+        }
+        .correct-result {
+            color:rgb(119, 204, 0);
+            font-size: 20px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Initial Start Screen -->
+        <div id="initial-screen">
+            <h1 class="quiz-header">Cinema Quiz</h1>
+            <img src="figures/quiz.png" alt="Cinema Quiz Image" class="start-image"> 
+            <button class="start-button" onclick="startQuiz()">Start the Quiz &rarr;</button>
+            
+
+        </div>
+
+        <!-- Decade Selection Screen -->
+        <div id="start-screen" style="display:none;">
+            <h2 class="quiz-header">Choose a Decade</h2>
+            <button class="option" onclick="selectDecade('80s')">The 80s</button>
+            <button class="option" onclick="selectDecade('90s')">The 90s</button>
+            <button class="option" onclick="selectDecade('2000s')">The 2000s</button>
+            <button class="option" onclick="selectDecade('2020s')">The 2020s</button> 
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" style="display:none;">
+            <h2 class="quiz-header">Cinema and TV Quiz</h2>
+            <div id="question-container"></div>
+            <div class="options" id="options-container"></div>
+            <div id="result" class="result"></div>
+            <div id="explanation" class="explanation"></div>
+            <button id="next-btn" class="next-button" style="display:none;" onclick="nextQuestion()">Next </button>
+        </div>
+
+
+    </div>
+
+    <script>
+        const quizData = {
+            "80s": [
+                {
+                    question: "Who played the main male character in 'Scarface' (1983)?",
+                    options: ["Al Pacino", "Robert De Niro", "Arnold Schwarzenegger"],
+                    answer: 0,
+                    explanation: "Al Pacino famously played Tony Montana in 'Scarface'.",
+                    image: "figures/scarface.webp"
+                },
+                {
+                    question: "'Terminator' (1984) was directed by which famous filmmaker?",
+                    options: ["Steven Spielberg","James Cameron","George Lucas"],
+                    answer: 1,
+                    explanation: "James Cameron directed the sci-fi classic 'Terminator'.",
+                    image: "figures/terminator.avif"
+                },
+                {
+                    question: "Who is the character that becomes a successful businessman, betraying his childhood friends in 'Il était une fois en Amérique' (1985)?",
+                    options: ["Max Bercovicz", " Jimmy O'Donnell"," Noodles (David Aaronson)"],
+                    answer: 0,
+                    explanation: "Max Bercovicz, played by James Woods, is a childhood friend of Noodles who rises to become a successful businessman. His ambition ultimately leads him to betray Noodles and their friends, highlighting the conflict between personal ambition and loyalty.",
+                    image: "figures/maxx.jpg"
+                },
+                {
+                    question: "What brings Axel Foley to Beverly Hills , in 'Beverly Hills Cop' (1985)?",
+                    options: ["A business trip", "A family reunion","To investigate the murder of a friend"],
+                    answer: 2,
+                    explanation: "Axel Foley comes to Beverly Hills to investigate the murder of his close friend, who was involved in criminal activities.",
+                    image: "figures/Axel.jpg"
+                },
+                {
+                    question: "True or False: 'Back to the Future' was released in 1985.",
+                    options: ["True", "False"],
+                    answer: 0,
+                    explanation: "'Back to the Future' was indeed released in 1985.",
+                    image: "figures/back_to_futur.jpg"
+                }
+            ],
+            "90s": [
+                {
+                    question: "Who originally turned down the role of Vivian Ward before Julia Roberts was cast in 'Pretty Woman' (1990)?",
+                    options: ["Sandra Bullock", "Demi Moore", "Meg Ryan"],
+                    answer: 2,
+                    explanation: "Meg Ryan turned down the role of Vivian Ward because she felt that the character could be seen as degrading to the image of women.",
+                    image: "figures/Meg.jpeg"
+                },
+                
+                {
+                    question: "Who plays the role of the two burglars, Harry and Marv, in Home Alone (1990)?",
+                    options: ["Joe Pesci and Daniel Stern","Jim Carrey and Jeff Daniels","John Candy and Steve Martin"],
+                    answer: 0,
+                    explanation: "Joe Pesci and Daniel Stern played the role of Harry and Marv in 'Home Alone' released in 1990.",
+                    image: "figures/homealone.webp"
+                },
+                {
+                    question: "Who is Andy's closest friend , in 'The Shawshank Redemption' (1994)",
+                    options: ["Norton", "Red"," Hadley"],
+                    answer: 1,
+                    explanation: "llis 'Red' Redding, played by Morgan Freeman, becomes Andy's closest friend and ally during their time in Shawshank.",
+                    image: "figures/andy.webp" 
+                },
+                {
+                    question: "What scientific method is used to recreate dinosaurs in Jurassic Park (1993)?",
+                    options: ["DNA hybridization", "Gene editing","Cloning"],
+                    answer: 2,
+                    explanation: "In Jurassic Park, dinosaurs are brought back to life through a fictionalized version of cloning.",
+                    image: "figures/adn.webp"
+                },
+                {
+                    question: "What happens to Alan when he and Sarah start playing Jumanji, in 'Jumanji' (1995).",
+                    options: ["He gets trapped in a time loop", "He turns into an animal","He is sucked into the game"],
+                    answer: 2,
+                    explanation: "When Alan and Sarah begin their game of Jumanji, Alan rolls the dice and is unexpectedly sucked into the game. This event traps him in another dimension for 26 years until he is later freed by Judy and Peter.",
+                    image: "figures/Jumanji.jpg"
+                }
+                
+            ],
+    "2000s": [
+        {
+            question: "What significant decision do Julien and Sophie make after a series of challenges and conflicts in 'Jeux d'enfants' (2003)?",
+            options: ["To move to different countries", "To get married", "To stop talking for ten years"],
+            answer: 2,
+            explanation: "After facing numerous challenges, Julien and Sophie decide to stop talking for ten years as a way to gain perspective on their relationship and allow for personal growth.",
+            image: "figures/cap.jpg"
+        },
+        {
+            question: "What happens to Philippe after he commits fraud to get his desired transfer in 'Bienvenue chez les Ch'tis' (2008)?",
+            options: ["He is transferred to Bergues", "He is promoted", "He is fired"],
+            answer: 0,
+            explanation: "After committing fraud to get a transfer to the Côte d'Azur, Philippe Abrams is instead caught and sent to Bergues, which he initially believes to be a terrible place, setting the stage for his comedic journey of discovery.",
+            image: "figures/chtis.jpg"
+        },
+        {
+            question: "What curse affects the characters in 'Pirates of the Caribbean: The Curse of the Black Pearl' (2003) under moonlight?",
+            options: ["They become ghosts", "They become skeletons", "They are unable to die"],
+            answer: 1,
+            explanation: "The characters in 'Pirates of the Caribbean: The Curse of the Black Pearl' are cursed to be undead skeletons under moonlight.",
+            image: "figures/barbossa.webp"
+        },
+        {
+            question: "Who is the druid that helps Numérobis in the construction of the palace in 'Astérix et Obélix: Mission Cléopâtre' (2002)?",
+            options: ["Panoramix", "Abracadafrix", "Agecanonix"],
+            answer: 0,
+            explanation: "Panoramix, the druid, helps Numérobis by providing him with magic potions to assist him in his challenge.",
+            image: "figures/asterix.webp"
+        },
+        {
+            question: "Which of the following films won the Academy Award for Best Original Screenplay in 2005?",
+            options: ["Collision (Crash) – Paul Haggis and Bobby Moresco", "Good Night and Good Luck – George Clooney and Grant Heslov", "Match Point – Woody Allen"],
+            answer: 0,
+            explanation: "In 2006, the Academy Award for Best Original Screenplay went to Collision (Crash), written by Paul Haggis and Bobby Moresco. This film explores interconnected stories about race, class, and prejudice in Los Angeles.",
+            image: "figures/CRASH.jpg"
+        }
+    ],
+    "2020s": [
+        {
+            question: "What drives Edmond Dantès to seek revenge after becoming the Count of Monte Cristo in 'The Count of Monte Cristo' (2024)?",
+            options: ["To reunite with his lost love, Mercédès.", "To become the richest man in France.", "To punish the men who betrayed him."],
+            answer: 2,
+            explanation: "Edmond's primary motivation is to get revenge on the three men who falsely accused him, leading to his years of imprisonment and suffering.",
+            image: "figures/edmond.webp"
+        },
+        {
+            question: "Who played the lead role of Robert Oppenheimer in the film 'Oppenheimer' (2023)?",
+            options: ["Matt Damon", "Cillian Murphy", "Benedict Cumberbatch"],
+            answer: 1,
+            explanation: "Cillian Murphy portrayed Robert Oppenheimer, delivering a critically acclaimed performance as the 'father of the atomic bomb.'",
+            image: "figures/murphy.webp"
+        },
+        {
+            question: "What is the main dilemma Barbie faces after leaving Barbieland for the real world, in 'Barbie' (2023)?",
+            options: [" She must resolve a conflict between the Kens and the Barbies.", "She must convince the other Barbies to return to Barbieland.", "She must choose between staying with Ken or exploring her own identity."],
+            answer: 2,
+            explanation: "After leaving Barbieland, Barbie experiences a crisis as she confronts her own identity and the societal expectations placed on her. She realizes that her relationship with Ken is complicated, as he desires a closer bond, while she is on a journey of self-discovery",
+            image: "figures/barbie.webp"
+        },
+        {
+            question: " What is the main focus of the story , In film 'Wonka' (2023) ?",
+            options: ["The origins of Willy Wonka and his journey to create his chocolate factory","Willy Wonka's rivalry with other chocolatiers","Charlie Bucket's visit to the chocolate factory"],
+            answer: 0,
+            explanation: "In the 2023 film Wonka, the story explores the early life of Willy Wonka, played by Timothée Chalamet, before he becomes the famous chocolatier known for his magical chocolate factor.",
+            image: "figures/wonka.jpg"
+        },
+        {
+            question: "'Back to Black'(2024)is a biographical film about the British singer-songwriter Amy Winehouse,featuring Marisa Abela in the lead role.",
+            options: ["true","false"],
+            answer: 0,
+            explanation: "Back to Black is a biographical film directed by Sam Taylor-Johnson, released in 2024, that explores the life and career of British singer-songwriter Amy Winehouse.",
+            image: "figures/amy.jpg"
+        },
+    ]
+    }
+
+        let currentDecade = null; // Initialize selected decade
+        let currentQuestionIndex = 0; // Initialize current question index
+        let score = 0; // Initialize score
+
+        function startQuiz() {
+            document.getElementById('initial-screen').style.display = 'none'; // Hide initial screen
+            document.getElementById('start-screen').style.display = 'block'; // Show decade selection
+        }
+
+
+        function selectDecade(decade) {
+            currentDecade = decade; // Set the selected decade
+            currentQuestionIndex = 0; // Reset question index
+            score = 0; // Reset score
+            document.getElementById('start-screen').style.display = 'none'; // Hide decade selection
+            document.getElementById('quiz-screen').style.display = 'block'; // Show quiz screen
+            loadQuestion(); // Load the first question
+        }
+
+        function loadQuestion() {
+            const questionContainer = document.getElementById('question-container');
+            const optionsContainer = document.getElementById('options-container');
+            const resultContainer = document.getElementById('result');
+            const explanationContainer = document.getElementById('explanation');
+            const nextButton = document.getElementById('next-btn');
+
+           
+
+            explanationContainer.style.display = 'none'; // Hide explanation initially
+            nextButton.style.display = 'none'; // Hide next button
+
+            const currentQuestion = quizData[currentDecade][currentQuestionIndex]; // Get the current question
+            questionContainer.innerHTML = currentQuestion.question; // Set the question text
+            optionsContainer.innerHTML = ''; // Clear previous options
+            resultContainer.innerHTML = ''; // Clear previous results
+
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.classList.add('option');
+                button.onclick = () => selectOption(index); // Handle option selection when we click
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function selectOption(selectedIndex) {
+            const currentQuestion = quizData[currentDecade][currentQuestionIndex]; // Get  the current question
+            const optionsContainer = document.getElementById('options-container');
+            const resultContainer = document.getElementById('result');
+            const explanationContainer = document.getElementById('explanation');
+            const nextButton = document.getElementById('next-btn');
+
+            // Clear existing option classes
+            const optionButtons = optionsContainer.getElementsByClassName('option');
+            for (let i = 0; i < optionButtons.length; i++) {
+                optionButtons[i].classList.remove('incorrect', 'correct'); // Remove any previous styling
+            }
+
+            // Check if the selected answer is correct
+            if (selectedIndex === currentQuestion.answer) {
+                score++; // Increment score
+                resultContainer.innerHTML = `<span class='correct-result'>Correct! (Score: ${score})</span>`;
+                optionButtons[selectedIndex].classList.add('correct'); // Highlight the correct option
+              
+            } else {
+                resultContainer.innerHTML =`<span class='incorrect-result'>Incorrect! (Score: ${score})</span>`
+                optionButtons[selectedIndex].classList.add('incorrect'); // Highlight incorrect option
+                optionButtons[currentQuestion.answer].classList.add('correct'); // Highlight the correct option
+            }
+            
+            // Disable all answer buttons to prevent multiple clicks
+            const allOptionButtons = document.querySelectorAll('.option');
+            allOptionButtons.forEach(btn => {
+                btn.disabled = true; // Disable all buttons
+            });
+
+            // Show explanation and image
+            explanationContainer.innerHTML = currentQuestion.explanation; // Set the explanation text
+            if (currentQuestion.image) {
+                const img = document.createElement('img');
+                img.src = currentQuestion.image; 
+                img.classList.add('explanation-img');
+                explanationContainer.appendChild(img);
+            }
+            explanationContainer.style.display = 'block'; // Show explanation
+            nextButton.style.display = 'block'; // Show the next button
+        }
+
+        function nextQuestion() {
+            const resultContainer = document.getElementById('result');
+            resultContainer.innerHTML = ''; // Clear result message
+            currentQuestionIndex++; // Move to the next question
+
+            // Check if there are more questions
+            if (currentQuestionIndex < quizData[currentDecade].length) {
+                loadQuestion(); // Load the next question
+            } else {
+                showResults(); // Show results if no more questions
+            }
+        }
+
+        function showResults() {
+            const totalQuestions = quizData[currentDecade].length; // Get total number of questions
+            const percentage = (score / totalQuestions) * 100; // Calculate percentage score 
+            let message = '';
+
+            // Determine the message based on the percentage
+            if (percentage === 100) {
+                message = "You're a true cinema master!";
+            } else if (percentage >= 80) {
+                message = " Well done! Almost perfect!";
+            } else if (percentage > 50) {
+                message = "Nice try! Keep watching movies!";
+            } else {
+                message = "Maybe a movie marathon is in order!";
+            }
+
+            // Update the quiz screen to display results
+            document.getElementById("quiz-screen").innerHTML = `
+                <h2 class="quiz-header">Quiz Completed</h2>
+                <p>Your score: ${score} / ${totalQuestions}</p>
+                <p>${message}</p>
+                <button class="start-button" onclick="restartQuiz()">Restart Quiz</button>
+            `;
+        }
+
+        
+        function restartQuiz() {
+    window.location.reload(); // Reloads the page to start fresh
+}
+
+    </script>
+</body>
+</html>
